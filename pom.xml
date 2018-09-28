@@ -27,6 +27,7 @@
 		<tomcat.version>8.5.28</tomcat.version>
 
 		<!-- REDMIC -->
+		<redmic.broker-lib.version>0.6.0</redmic.broker-lib.version>
 
 		<!-- OTHERS -->
 
@@ -39,11 +40,32 @@
 
 	<dependencies>
 
-		<!-- Spring, Depende del microservicio. Se podría cambiar por REST, Socket... -->
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>io.micrometer</groupId>
+		    <artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
+		
+		<!-- Redmic -->
+
+		<dependency>
+			<groupId>es.redmic.lib</groupId>
+			<artifactId>broker-lib</artifactId>
+			<version>${redmic.broker-lib.version}</version>
 		</dependency>
 
 		<!-- Logs -->
