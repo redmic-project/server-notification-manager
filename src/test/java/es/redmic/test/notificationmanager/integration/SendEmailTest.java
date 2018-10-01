@@ -2,16 +2,11 @@ package es.redmic.test.notificationmanager.integration;
 
 import static org.mockito.Mockito.verify;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
-
 import javax.annotation.PostConstruct;
 
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -37,38 +32,36 @@ import es.redmic.testutils.kafka.KafkaBaseIntegrationTest;
 @DirtiesContext
 @TestPropertySource(properties = { "schema.registry.port=18084" })
 public class SendEmailTest extends KafkaBaseIntegrationTest {
-	
+
 	static String alertTopic = "alert";
 
 	@ClassRule
 	public static KafkaEmbedded embeddedKafka = new KafkaEmbedded(1, true, alertTopic);
-	
+
 	@Autowired
 	private KafkaTemplate<String, Message> kafkaTemplate;
-	
+
 	@MockBean
 	EmailService service;
-	
+
 	@PostConstruct
 	public void SendEmailTestPostConstruct() throws Exception {
 
 		createSchemaRegistryRestApp(embeddedKafka.getZookeeperConnectionString(), embeddedKafka.getBrokersAsString());
 	}
-	
+
 	@Test
 	public void sentAlertMessage_SendEmail_IfTypeIsEmail() throws InterruptedException {
-		
-		String subjectDefault = "[ERROR][TEST] ",
-				subject = subjectDefault + "SendMailTest",
-				to = "info@redmic.es",
+
+		String subjectDefault = "[ERROR][TEST] ", subject = subjectDefault + "SendMailTest", to = "info@redmic.es",
 				content = "Esto es una prueba";
 		Message message = new Message(to, subject, content, AlertType.ERROR.name());
-		
+
 		ListenableFuture<SendResult<String, Message>> future = kafkaTemplate.send(alertTopic, message);
 		future.addCallback(new SendListener());
-		
+
 		Thread.sleep(4000);
-		
+
 		verify(service).sendSimpleMessage(to, subject, content);
 	}
 }
