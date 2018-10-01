@@ -12,6 +12,7 @@ services:
       - JAVA_OPTS=-XX:MaxRAMFraction=2
     networks:
       - traefik-net
+      - kafka-net
     healthcheck:
       test: wget --spider -S -t 3 http://localhost:${MICROSERVICE_PORT}/api/${MICROSERVICE_NAME}/actuator/health
       interval: 30s
@@ -21,4 +22,7 @@ services:
 
 networks:
   traefik-net:
+    external: true
+
+  kafka-net:
     external: true
