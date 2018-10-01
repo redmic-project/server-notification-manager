@@ -22,9 +22,7 @@ public class NotificationController {
 	@KafkaHandler
 	public void listen(Message event) {
 		
-		//TODO: si el type no es email, llamar al servicio adecuado.
-		if (!event.getTo().contains("test")) {
-			service.sendSimpleMessage(event.getTo(), event.getSubject(), event.getMessage());
-		}
+		//TODO: si type no es email, llamar al servicio adecuado.
+		service.sendSimpleMessage(event.getTo(), event.getSubject(), event.getMessage());
 	}
 }
