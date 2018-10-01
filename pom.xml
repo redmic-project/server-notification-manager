@@ -131,7 +131,7 @@
 						</goals>
 						<configuration>
 							<executable>true</executable>
-							<finalName>template</finalName>
+							<finalName>notification-manager</finalName>
 							<outputDirectory>dist</outputDirectory>
 						</configuration>
 					</execution>
