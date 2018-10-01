@@ -28,7 +28,7 @@
 
 		<!-- REDMIC -->
 		<redmic.broker-lib.version>0.6.0</redmic.broker-lib.version>
-
+		<redmic.test-utils.version>0.6.0</redmic.test-utils.version>
 		<!-- OTHERS -->
 
 		<!-- Plugins -->
@@ -77,6 +77,26 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
+		</dependency>
+		
+		<!-- test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>es.redmic.lib</groupId>
+			<artifactId>test-utils</artifactId>
+			<version>${redmic.test-utils.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<distributionManagement>
