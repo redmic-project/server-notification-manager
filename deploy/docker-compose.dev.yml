@@ -1,7 +1,7 @@
 version: '3.5'
 
 services:
-  template:
+  notification-manager:
     ports:
       - target: ${MICROSERVICE_PORT}
         published: ${MICROSERVICE_PORT}

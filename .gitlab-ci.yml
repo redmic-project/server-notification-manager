@@ -10,6 +10,8 @@ maven-build:
   variables:
     MAVEN_OPTS: -Dmaven.repo.local=.m2/repository
     SPRING_PROFILES_ACTIVE: test
+    SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+    SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
   only:
     - branches
   cache:
@@ -117,12 +119,15 @@ deploy-dev:
     IMAGE_TAG: ${CI_COMMIT_SHA}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
     SPRING_PROFILES_ACTIVE: pre
+    SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+    SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
   services:
     - docker:dind
   script:
     - >
       deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE} SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}
   environment:
     name: dev
     url: https://appdev.${DEV_PUBLIC_HOSTNAME}/api/${CI_PROJECT_NAME}
@@ -141,12 +146,15 @@ deploy-supporting-branch:
     IMAGE_TAG: ${CI_COMMIT_SHA}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
     SPRING_PROFILES_ACTIVE: pre
+    SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+    SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
   services:
     - docker:dind
   script:
     - >
       deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE} SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}
   environment:
     name: dev
     url: https://appdev.${DEV_PUBLIC_HOSTNAME}/api/${CI_PROJECT_NAME}
@@ -169,12 +177,15 @@ deploy-pro:
     IMAGE_TAG: ${CI_COMMIT_SHA}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
     SPRING_PROFILES_ACTIVE: prod
+    SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+    SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
   services:
     - docker:dind
   script:
     - >
       deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
-      SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE} SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD}
   environment:
     name: pro
     url: https://${PRO_PUBLIC_HOSTNAME}/api/${CI_PROJECT_NAME}
