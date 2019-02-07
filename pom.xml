@@ -124,18 +124,11 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-						<configuration>
-							<executable>true</executable>
-							<finalName>notification-manager</finalName>
-							<outputDirectory>dist</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
+				<configuration>
+					<executable>true</executable>
+					<finalName>notification-manager</finalName>
+					<outputDirectory>dist</outputDirectory>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
