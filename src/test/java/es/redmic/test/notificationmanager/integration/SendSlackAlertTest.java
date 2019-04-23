@@ -1,5 +1,7 @@
 package es.redmic.test.notificationmanager.integration;
 
+import static org.mockito.Mockito.times;
+
 /*-
  * #%L
  * Notification manager
@@ -44,6 +46,7 @@ import es.redmic.brokerlib.alert.Message;
 import es.redmic.brokerlib.listener.SendListener;
 import es.redmic.notificationmanager.NotificationManagerApplication;
 import es.redmic.notificationmanager.mail.service.EmailService;
+import es.redmic.notificationmanager.mail.service.SlackService;
 import es.redmic.testutils.kafka.KafkaBaseIntegrationTest;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -51,7 +54,7 @@ import es.redmic.testutils.kafka.KafkaBaseIntegrationTest;
 @ActiveProfiles("test")
 @DirtiesContext
 @TestPropertySource(properties = { "schema.registry.port=18084" })
-public class SendEmailTest extends KafkaBaseIntegrationTest {
+public class SendSlackAlertTest extends KafkaBaseIntegrationTest {
 
 	static String alertTopic = "alert";
 
@@ -62,7 +65,10 @@ public class SendEmailTest extends KafkaBaseIntegrationTest {
 	private KafkaTemplate<String, Message> kafkaTemplate;
 
 	@MockBean
-	EmailService service;
+	EmailService emailService;
+	
+	@MockBean
+	SlackService slackService;
 
 	@PostConstruct
 	public void SendEmailTestPostConstruct() throws Exception {
@@ -70,19 +76,36 @@ public class SendEmailTest extends KafkaBaseIntegrationTest {
 		createSchemaRegistryRestApp(embeddedKafka.getEmbeddedKafka().getZookeeperConnectionString(),
 				embeddedKafka.getEmbeddedKafka().getBrokersAsString());
 	}
-
+	
 	@Test
-	public void sentAlertMessage_SendEmail_IfTypeIsEmail() throws InterruptedException {
+	public void sentAlertMessage_SendSlackAlert_IfTypeIsRealTime() throws InterruptedException {
 
-		String subjectDefault = "[ERROR][TEST] ", subject = subjectDefault + "SendMailTest", to = "info@redmic.es",
+		String subjectDefault = "[ERROR][TEST] ",
+				subject = subjectDefault + "SendSlackAlertTest",
 				content = "Esto es una prueba";
-		Message message = new Message(to, subject, content, AlertType.ERROR.name());
+		
+		Message message = new Message(subject, content, AlertType.NIFI_ACTIVITY_MONITOR.name());
 
 		ListenableFuture<SendResult<String, Message>> future = kafkaTemplate.send(alertTopic, message);
 		future.addCallback(new SendListener());
 
 		Thread.sleep(4000);
+		verify(slackService, times(1)).sendMessage(subject, content);
+	}
+	
+	@Test
+	public void sentAlertMessage_NoSendSlackAlert_IfTypeIsNotRealTime() throws InterruptedException {
 
-		verify(service).sendSimpleMessage(to, subject, content);
+		String subjectDefault = "[ERROR][TEST] ",
+				subject = subjectDefault + "SendSlackAlertTest",
+				content = "Esto es una prueba";
+		
+		Message message = new Message(subject, content, AlertType.ERROR.name());
+
+		ListenableFuture<SendResult<String, Message>> future = kafkaTemplate.send(alertTopic, message);
+		future.addCallback(new SendListener());
+
+		Thread.sleep(4000);
+		verify(slackService, times(0)).sendMessage(subject, content);
 	}
 }

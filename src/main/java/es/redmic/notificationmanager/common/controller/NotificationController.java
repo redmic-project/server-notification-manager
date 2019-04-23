@@ -27,8 +27,10 @@ import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Controller;
 
+import es.redmic.brokerlib.alert.AlertUtil;
 import es.redmic.brokerlib.alert.Message;
 import es.redmic.notificationmanager.mail.service.EmailService;
+import es.redmic.notificationmanager.mail.service.SlackService;
 
 @Controller
 @KafkaListener(topics = "${broker.topic.alert}")
@@ -36,18 +38,25 @@ public class NotificationController {
 
 	protected static Logger logger = LogManager.getLogger();
 
-	EmailService service;
+	EmailService emailService;
+	
+	SlackService slackService;
 
 	@Autowired
-	public NotificationController(EmailService service) {
-		this.service = service;
+	public NotificationController(EmailService emailService, SlackService slackService) {
+		this.emailService = emailService;
+		this.slackService = slackService;
 	}
 
 	@KafkaHandler
 	public void listen(Message event) {
 
-		// TODO: decidir el canal para llamar al servicio adecuado.
-		service.sendSimpleMessage(event.getTo(), event.getSubject(), event.getMessage());
+		emailService.sendSimpleMessage(event.getTo(), event.getSubject(), event.getMessage());
+		
+		if (AlertUtil.isRealTimeType(event.getType())) {
+			slackService.sendMessage(event.getSubject(), event.getMessage());
+		}
+		
 		logger.info("Recibida notificación -> {}: {}", event.getSubject(), event.getMessage());
 	}
 }
