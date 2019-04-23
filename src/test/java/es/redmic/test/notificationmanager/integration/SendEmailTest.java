@@ -32,7 +32,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.kafka.test.rule.KafkaEmbedded;
+import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -56,7 +56,7 @@ public class SendEmailTest extends KafkaBaseIntegrationTest {
 	static String alertTopic = "alert";
 
 	@ClassRule
-	public static KafkaEmbedded embeddedKafka = new KafkaEmbedded(1, true, alertTopic);
+	public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(3, true, 3, alertTopic);
 
 	@Autowired
 	private KafkaTemplate<String, Message> kafkaTemplate;
@@ -67,7 +67,8 @@ public class SendEmailTest extends KafkaBaseIntegrationTest {
 	@PostConstruct
 	public void SendEmailTestPostConstruct() throws Exception {
 
-		createSchemaRegistryRestApp(embeddedKafka.getZookeeperConnectionString(), embeddedKafka.getBrokersAsString());
+		createSchemaRegistryRestApp(embeddedKafka.getEmbeddedKafka().getZookeeperConnectionString(),
+				embeddedKafka.getEmbeddedKafka().getBrokersAsString());
 	}
 
 	@Test
