@@ -13,13 +13,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>notification-manager</artifactId>
 	<packaging>jar</packaging>
-	<version>0.9.0-feature-slackIntegration</version>
+	<version>0.10.0</version>
 	<name>Notification manager</name>
 	<description>Microservice for send notifications</description>
 
 	<properties>
 		<!-- REDMIC -->
-		<redmic.broker-lib.version>0.9.0-feature-slackIntegration</redmic.broker-lib.version>
+		<redmic.broker-lib.version>0.10.0</redmic.broker-lib.version>
 		<redmic.test-utils.version>0.8.0</redmic.test-utils.version>
 		
 		<!-- OTROS -->
