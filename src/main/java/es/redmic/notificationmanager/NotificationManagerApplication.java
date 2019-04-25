@@ -20,6 +20,8 @@ package es.redmic.notificationmanager;
  * #L%
  */
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
@@ -40,6 +42,7 @@ public class NotificationManagerApplication {
 		SpringApplication.run(NotificationManagerApplication.class, args);
 	}
 
+	@PostConstruct
 	@Bean
 	MeterRegistryCustomizer<MeterRegistry> metricsCommonTags() {
 		return registry -> registry.config().commonTags("application", microserviceName);
