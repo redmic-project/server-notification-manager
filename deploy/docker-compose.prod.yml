@@ -2,7 +2,5 @@ version: '3.5'
 
 services:
   notification-manager:
-    deploy:
-      placement:
-        constraints:
-          - node.role == worker
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
