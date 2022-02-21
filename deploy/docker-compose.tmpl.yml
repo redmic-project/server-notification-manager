@@ -2,46 +2,65 @@ version: '3.5'
 
 services:
   notification-manager:
-    image: ${IMAGE_NAME}:${IMAGE_TAG:-latest}
+    image: ${IMAGE_NAME:-registry.gitlab.com/redmic-project/server/notification-manager}:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: ${DOCKERFILE:-Dockerfile}
+      args:
+        PARENT_IMAGE_NAME:
+        PARENT_IMAGE_TAG:
+        MICROSERVICE_PORT:
     environment:
-      - MICROSERVICE_NAME
-      - MICROSERVICE_PORT
-      - SPRING_PROFILES_ACTIVE
-      - SPRING_MAIL_USERNAME
-      - SPRING_MAIL_PASSWORD
-      - SLACK_WEBHOOK_URL
-      - SLACK_WEBHOOK_USERNAME
-      - SLACK_WEBHOOK_CHANNEL
-      - JAVA_OPTS=-XX:MaxRAMFraction=2
+      MICROSERVICE_NAME:
+      MICROSERVICE_PORT:
+      SPRING_MAIL_HOST:
+      SPRING_MAIL_USERNAME:
+      SPRING_MAIL_PASSWORD:
+      SLACK_WEBHOOK_URL:
+      SLACK_WEBHOOK_USERNAME:
+      SLACK_WEBHOOK_CHANNEL:
+      JAVA_OPTS: -XX:MaxRAMFraction=2
     networks:
-      - traefik-net
-      - kafka-net
+      metric-net:
+      traefik-net:
+      kafka-net:
     healthcheck:
       test: wget --spider -q http://localhost:${MICROSERVICE_PORT}/api/notification/actuator/health
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 2m
+      interval: ${HEALTHCHECK_INTERVAL:-30s}
+      timeout: ${HEALTHCHECK_TIMEOUT:-10s}
+      retries: ${HEALTHCHECK_RETRIES:-3}
+      start_period: ${HEALTHCHECK_START_PERIOD:-2m}
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: ${REPLICAS:-1}
       labels:
         traefik.frontend.rule: Host:${PUBLIC_HOSTNAME};PathPrefix:/api/${MICROSERVICE_NAME}
         traefik.backend: ${MICROSERVICE_NAME}
         traefik.port: "${MICROSERVICE_PORT}"
       restart_policy:
-        delay: 1m
-        window: 3m
+        delay: ${RESTART_DELAY:-1m}
+      update_config:
+        delay: ${UPDATE_DELAY:-2m}
       resources:
         limits:
-          cpus: '0.5'
-          memory: 512M
+          cpus: '${RESOURCES_LIMITS_CPUS:-0.5}'
+          memory: ${RESOURCES_LIMITS_MEMORY:-512M}
         reservations:
-          memory: 410M
+          cpus: '${RESOURCES_RESERVATIONS_CPUS:-0.001}'
+          memory: ${RESOURCES_RESERVATIONS_MEMORY:-410M}
 
 networks:
+  metric-net:
+    name: ${METRIC_NET_NAME:-metric-net}
+    driver: ${METRIC_NET_DRIVER:-overlay}
+    external: true
+
   traefik-net:
+    name: ${TRAEFIK_NET_NAME:-traefik-net}
+    driver: ${TRAEFIK_NET_DRIVER:-overlay}
     external: true
 
   kafka-net:
+    name: ${KAFKA_NET_NAME:-kafka-net}
+    driver: ${KAFKA_NET_DRIVER:-overlay}
     external: true

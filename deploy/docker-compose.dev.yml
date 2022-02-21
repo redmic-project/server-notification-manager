@@ -2,7 +2,5 @@ version: '3.5'
 
 services:
   notification-manager:
-    ports:
-      - target: ${MICROSERVICE_PORT}
-        published: ${MICROSERVICE_PORT}
-        mode: host
+    environment:
+      SPRING_PROFILES_ACTIVE: pre
