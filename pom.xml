@@ -13,7 +13,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>notification-manager</artifactId>
 	<packaging>jar</packaging>
-	<version>0.10.0</version>
+	<version>0.10.0-feature-updateServiceLabels</version>
 	<name>Notification manager</name>
 	<description>Microservice for send notifications</description>
 
